@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Glitch JS</title>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	vertical-align: bottom;
+}
+
+html, body {
+	font-family: Futura, Helvetica, Arial, sans-serif;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+}
+
+html {
+	background-image: 
+		linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee), 
+		linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee);
+	background-size: 1em 1em;
+	background-position: 0 0, 0.5em 0.5em;
+}
+
+body {
+	background-size: contain;
+	background-position: center;
+	display: table;
+}
+
+header {
+	display: table-cell;
+	padding: 0 5% 5em;
+	vertical-align: middle;
+	z-index: -1;
+}
+
+form { 
+	width: 100%;
+	padding: 0 0 7.5%;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	z-index: 10;
+}
+
+h1 { margin: 0 0 2% }
+
+p {
+	line-height: 1.6;
+	text-align: left;
+	max-width: 28em;
+	width: 100%;
+	margin: 0 auto 5%;
+}
+
+.button {
+	font-size: 75%;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	word-spacing: 0.06em;
+	color: #000;
+	background: #fff;
+	width: 12em;
+	padding: 1.25em 1em 1.5em;
+	margin: 0 0.25em;
+	display: inline-block;
+	border: 2px solid #000;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;   
+}
+
+.button:hover, 
+.button:focus {
+	color: blue;
+	border-color: blue;
+}
+
+.button:disabled { background: transparent }
+
+input[type=file] {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	z-index: -1;
+}
+
+body.processing .button.glitch,
+.button:disabled { 
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: default;
+}
+
+body.glitched header { display: none }
+</style>
+</head>
+<body data-glitch="a.jpg">
+
+	<header>
+		<h1>Glitch JS</h1>
+		<p>Drop or select an image to glitch, supported filetypes are jpeg, png, and gif. Your image will not be uploaded.</p>
+	</header>
+
+	<form>
+		<label class="button" for="image">Select image</label>
+		<input id="image" name="input" type="file" onchange="update(this)">	
+		<button class="button glitch" type="button" onclick="update()" disabled>Glitch Again</button>
+	</form>
+
+</body>
+<script src="glitch.min.js"></script>
+<script>
+var base = "";
+var body = document.body;
+var button = document.querySelector("button.glitch");
+
+function update(input){ 
+	
+	if (input){
+		var reader = new FileReader();
+		reader.onload = function(){ render(reader.result) };
+		reader.readAsDataURL(input.files[0]);
+	}
+	else render(base);
+
+}
+
+function render(source){
+
+	base = source;
+	body.classList.add("processing");
+	
+	var strength = 0|Math.random() * 100;
+	glitch(source, function(result){
+	
+		body.style.backgroundImage = "url(" + result + ")";
+		body.classList.add("glitched");
+		body.classList.remove("processing");
+	
+		button.disabled = false;
+	
+	}, strength);
+	
+}
+</script>
+</html>
+
