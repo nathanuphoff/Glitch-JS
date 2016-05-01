@@ -139,11 +139,24 @@ var glitch = function(){ "use strict";
 		
 		image.onload = function(){
 		
-			context.drawImage(image, 0, 0, 2, 2);
-			var sample = context.getImageData(0, 0, 2, 2).data;
-			var	average = Math.floor((sample[12] + sample[13] + sample[14]) / 3);
-		
-			if (average <= 8 || average === 128) manipulate(base64, callback, strength, --attempts);
+			context.drawImage(image, 0, 0, 2, 3);
+			var sample = context.getImageData(0, 0, 2, 3).data;
+			
+			for (var i = 0, length = sample.length, broken = false, previous; i < length;){
+				
+				var r = sample[i++], g = sample[i++], b = sample[i++], a = sample[i++];
+				var average = 0|(r + g + b) / 3;
+				
+				if (previous === average){ 
+					broken = true;
+					break;
+				}
+				
+				previous = average;
+				
+			}
+											
+			if (broken === true) manipulate(base64, callback, strength, --attempts);
 			else callback(result, true);
 			
 		};

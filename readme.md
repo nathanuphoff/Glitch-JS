@@ -1,22 +1,22 @@
 Glitch JS is a small and dependency free script that manipulates images by making a random edits causing visual glitches to appear. Supported file types are jpeg, png, and (animated) gif.
 
 # Demo
-*coming soon…*
+*coming soon...*
 
 # Usage
 ## Examples
 ```
-// Using a URL…
+// Using a URL...
 glitch("/image.jpg", callback);
 
-// …or base64-encoded string.
+// ...or base64-encoded string.
 glitch(base64, callback);
 ```
 
 The callback arguments are a base64-encoded image string and a boolean indicating whether the manipulation was successful.
 ```
 function callback(image, succes){
-	// do whatever…   
+	// do whatever...  
 }
 ```
 When glitch fails to create a valid manipulated image, the original image will be passed instead.
