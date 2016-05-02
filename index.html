@@ -122,6 +122,7 @@ body.glitched header { display: none }
 </body>
 <script src="glitch.min.js"></script>
 <script>
+"use strict";
 var base = "";
 var body = document.body;
 var button = document.querySelector("button.glitch");
@@ -143,8 +144,10 @@ function render(source){
 	body.classList.add("processing");
 	
 	var strength = 0|Math.random() * 100;
-	glitch(source, function(result){
-	
+	glitch(source, function(result, succes, object){
+		
+		console.log(succes, object);
+					
 		body.style.backgroundImage = "url(" + result + ")";
 		body.classList.add("glitched");
 		body.classList.remove("processing");

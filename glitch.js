@@ -14,8 +14,8 @@ var glitch = function(){ "use strict";
 		attempts = limit(attempts, 5, 100) || 50;
 									
 		var isBase64 = /data:[\w\/\w]+;base64,/i.test(source);		
-		if (isBase64) manipulate(prepare(source, strength), callback, strength, attempts);
-		else get(source, callback, strength, attempts);
+		if (isBase64) manipulate(prepare(this, source, callback, strength), attempts);
+		else get(this, source, callback, strength, attempts);
 
 	}	
 	return glitch;
@@ -23,7 +23,7 @@ var glitch = function(){ "use strict";
 	// Private methods
 	// A) Preparation
 	// 1) Load a raw image file using xhr, base64-encode it and start over
-	function get(source, callback, strength, attempts){
+	function get(context, source, callback, strength, attempts){
 					
 		var request = new XMLHttpRequest();
 		request.open('GET', source);
@@ -35,7 +35,7 @@ var glitch = function(){ "use strict";
 			if (match){
 				var type = /JFIF/i.test(match[0]) ?	"jpeg" : match[0].toLowerCase();
 				var file = encode(response, "image/" + type);
-				glitch(file, callback, strength, attempts);
+				glitch.call(context, file, callback, strength, attempts);
 			}
 			
 		};
@@ -44,7 +44,117 @@ var glitch = function(){ "use strict";
 	
 	}
 	
-	// 1.1) base64-encode a binary representation of an image file
+	// 2) Return an Object from a base64-encoded string that will be used later on
+	function prepare(context, source, callback, strength){
+	
+		var split = source.split(",");
+		var data = distribute(split[1], strength);
+		
+		return {
+			
+			context: context,
+			source: source,
+			callback: callback,
+			strength: strength,
+			attempts: 0,
+			
+			header: split[0] + ",",
+			data: data,
+			slice: data[data.length - 1].length
+			
+		};
+		
+		// Return an Array with an even distribution of the image data
+		function distribute(data){
+			var bytes = data.length;
+			var slice = Math.sqrt(bytes * (parseFloat("1e" + bytes.toString().length) / strength));
+			var count = bytes / slice;											
+			return data.match(new RegExp('.{1,' + Math.ceil(bytes / count) + '}', 'g'));
+		}
+		
+	}
+	
+	// B) Manipulation
+	// 1)
+	function manipulate(object, attempts){
+										
+		var data = object.data;
+		var result = [ object.header ];
+				
+		if (++object.attempts < attempts){
+			for (var i = 0, length = data.length; i < length; ++i){
+				result.push(alter(data[i], object.slice, attempts));	
+			}
+			validate(result.join(""), object, attempts);
+		}
+		else delegate(object.source, false, object);
+		
+		function alter(string, length, attempts){
+			
+			var amount = limit(0|attempts / 10, 1, 10);
+			while (amount--){
+				var index = Math.random() * length|0;
+				var replacement = charset.charAt(Math.random() * 64|0);
+				string = string.substring(0, index) + replacement + string.substring(++index);
+			}
+			return string;
+		}
+			
+	}
+		
+	// 2) Check the image integrety, manipulate again when its broken, otherwise run the callback
+	function validate(result, object, attempts){
+			
+		var canvas = document.createElement('canvas');
+		var context = canvas.getContext('2d');
+		var	image = new Image();
+		
+		image.onload = function(){
+		
+			context.drawImage(image, 0, 0, 2, 3);
+			var sample = context.getImageData(0, 0, 2, 3).data;
+			
+			for (var i = 0, length = sample.length, broken = false, previous; i < length;){
+				
+				var r = sample[i++], g = sample[i++], b = sample[i++], a = sample[i++];
+				var average = 0|(r + g + b) / 3;
+				
+				if (previous === average){ 
+					broken = true;
+					break;
+				}
+				
+				previous = average;
+				
+			}
+			if (broken) manipulate(object, attempts);
+			else delegate(result, true, object);
+			
+		};
+		image.onerror = function(){ manipulate(object, attempts) };
+		image.src = result;
+			
+	}
+	
+	// C) Callback
+	function delegate(result, succes, object){
+				
+		object.callback.call(object.context, result, succes, {
+			source: object.source,
+			strength: object.strength,
+			attempts: object.attempts,
+		});
+		
+	}
+	
+	// C) Utilities
+	function error(message){ console.error(message) }
+	
+	function limit(number, min, max){
+		return number < min ? min : number > max ? max : number;
+	}
+	
+	// base64-encode a binary representation of an image file
 	function encode(blob, type) {
 					
 		var data = [ "data:" + type + ";base64," ];
@@ -76,100 +186,6 @@ var glitch = function(){ "use strict";
 		
 		return data.join("");
 		
-	}
-	
-	// 2) Return an Object from a base64-encoded string that will be used later on
-	function prepare(base64, strength){
-	
-		var split = base64.split(",");
-		var data = distribute(split[1], strength);
-		
-		return {
-			header: split[0] + ",",
-			data: data,
-			slice: data[data.length - 1].length
-		};
-		
-		// Return an Array with an even distribution of the image data
-		function distribute(data){
-			var bytes = data.length;
-			var slice = Math.sqrt(bytes * (parseFloat("1e" + bytes.toString().length) / strength));
-			var count = bytes / slice;											
-			return data.match(new RegExp('.{1,' + Math.ceil(bytes / count) + '}', 'g'));
-		}
-		
-	}
-	
-	// B) Manipulation
-	// 1)
-	function manipulate(object, callback, strength, attempts){
-										
-		var data = object.data;
-		var result = [ object.header ];
-				
-		if (attempts--){
-			for (var i = 0, length = data.length; i < length; ++i){
-				result.push(alter(data[i], object.slice, attempts));	
-			}
-			validate(result.join(""), object, callback, strength, attempts);
-		}
-		else callback(object.header + data.join(""), false);
-		
-		function alter(string, length, attempts){
-			
-			var amount = limit(0|attempts / 10, 1, 10);
-			while (amount--){
-				var index = Math.random() * length|0;
-				var replacement = charset.charAt(Math.random() * 64|0);
-				string = string.substring(0, index) + replacement + string.substring(++index);
-			}
-			
-			return string;
-					
-		}
-			
-	}
-		
-	// 2) Check the image integrety, manipulate again when its broken, otherwise run the callback
-	function validate(result, base64, callback, attempts, strength){
-			
-		var canvas = document.createElement('canvas');
-		var context = canvas.getContext('2d');
-		var	image = new Image();
-		
-		image.onload = function(){
-		
-			context.drawImage(image, 0, 0, 2, 3);
-			var sample = context.getImageData(0, 0, 2, 3).data;
-			
-			for (var i = 0, length = sample.length, broken = false, previous; i < length;){
-				
-				var r = sample[i++], g = sample[i++], b = sample[i++], a = sample[i++];
-				var average = 0|(r + g + b) / 3;
-				
-				if (previous === average){ 
-					broken = true;
-					break;
-				}
-				
-				previous = average;
-				
-			}
-											
-			if (broken === true) manipulate(base64, callback, strength, --attempts);
-			else callback(result, true);
-			
-		};
-		image.onerror = function(){ manipulate(base64, callback, strength, attempts) };
-		image.src = result;
-			
-	}
-	
-	// C) Utilities
-	function error(message){ console.error(message) }
-	
-	function limit(number, min, max){
-		return number < min ? min : number > max ? max : number;
 	}
 	
 }();
