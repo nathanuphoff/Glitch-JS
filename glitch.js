@@ -1,7 +1,7 @@
 var glitch = function(){ "use strict";
 
 	var support = /[jpeg|png|gif]+/i;
-	var	charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+	var charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	
 	// Public methods
 	// A) Initiate a new glitch() image
