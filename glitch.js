@@ -1,6 +1,5 @@
 var glitch = function(){ "use strict";
 	
-	var support = /[jpeg|png|gif]+/i;
 	var charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	
 	// Public methods
@@ -17,14 +16,14 @@ var glitch = function(){ "use strict";
 		if (isBase64) manipulate(prepare(this, source, callback, strength), attempts);
 		else get(this, source, callback, strength, attempts);
 	
-	}	
+	}
 	return glitch;
 	
 	// Private methods
 	// A) Preparation
 	// 1) Load a raw image file using xhr, base64-encode it and start over
 	function get(context, source, callback, strength, attempts){
-					
+		
 		var request = new XMLHttpRequest();
 		request.open('GET', source);
 		request.overrideMimeType('text/plain;charset=x-user-defined');
@@ -33,7 +32,7 @@ var glitch = function(){ "use strict";
 			var response = request.response;
 			var match = response.substring(0,24).match(/[JFIF|GIF|PNG]+/i);
 			if (match){
-				var type = /JFIF/i.test(match[0]) ?	"jpeg" : match[0].toLowerCase();
+				var type = /[JFIF]+/i.test(match[0]) ?	"jpeg" : match[0].toLowerCase();
 				var file = encode(response, "image/" + type);
 				glitch.call(context, file, callback, strength, attempts);
 			}
@@ -49,6 +48,8 @@ var glitch = function(){ "use strict";
 	
 		var split = source.split(",");
 		var data = distribute(split[1], strength);
+		
+		if (split[0].charAt(11) === "p") strength /= 4; // reduce strength for png images
 		
 		return {
 			
@@ -92,7 +93,7 @@ var glitch = function(){ "use strict";
 		// 
 		function alter(string, length, attempts){
 			
-			var amount = limit(0|attempts / 10, 1, 10);
+			var amount = limit(0|attempts / 2, 1, 25);
 			while (amount--){
 				var index = Math.random() * length|0;
 				var replacement = charset.charAt(Math.random() * 64|0);
@@ -124,7 +125,6 @@ var glitch = function(){ "use strict";
 					broken = true;
 					break;
 				}
-				
 				previous = average;
 				
 			}
@@ -139,7 +139,7 @@ var glitch = function(){ "use strict";
 	
 	// C) Callback
 	function delegate(result, succes, object){
-				
+		
 		object.callback.call(object.context, result, succes, {
 			source: object.source,
 			strength: object.strength,

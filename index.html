@@ -240,7 +240,7 @@ img.visible { display: inline-block }
 			<img id="png" src="https://i.imgur.com/e9uQxrd.png">
 			<img id="gif" src="http://i.imgur.com/7O2FM6I.gif">
 			
-			<small>Image via <a href="https://imgur.com">Imgur</a></small>
+			<small>Images via <a href="https://imgur.com">Imgur</a></small>
 		</div>
 		
 		<form>
@@ -253,7 +253,7 @@ img.visible { display: inline-block }
 <script>
 "use strict";
 // glitch.min.js
-var glitch=function(){"use strict";function c(a,b,c,g){if("string"!=typeof a)return i("An image source is required");if("function"!=typeof b)return i("A callback Function is required");c=j(c,5,100)||25,g=j(g,5,100)||50;var h=/data:[\w\/\w]+;base64,/i.test(a);h?f(e(this,a,b,c),g):d(this,a,b,c,g)}function d(a,b,d,e,f){var g=new XMLHttpRequest;g.open("GET",b),g.overrideMimeType("text/plain;charset=x-user-defined"),g.onload=function(){var b=g.response,h=b.substring(0,24).match(/[JFIF|GIF|PNG]+/i);if(h){var i=/JFIF/i.test(h[0])?"jpeg":h[0].toLowerCase(),j=k(b,"image/"+i);c.call(a,j,d,e,f)}},g.onerror=function(){i("The image could not be loaded")},g.send()}function e(a,b,c,d){function g(a){var b=a.length,c=Math.sqrt(b*(parseFloat("1e"+b.toString().length)/d)),e=b/c;return a.match(new RegExp(".{1,"+Math.ceil(b/e)+"}","g"))}var e=b.split(","),f=g(e[1],d);return{context:a,source:b,callback:c,strength:d,attempts:0,header:e[0]+",",data:f,slice:f[f.length-1].length}}function f(a,c){function k(a,c,d){for(var e=j(0|d/10,1,10);e--;){var f=Math.random()*c|0,g=b.charAt(64*Math.random()|0);a=a.substring(0,f)+g+a.substring(++f)}return a}var d=a.data,e=[a.header];if(++a.attempts<c){for(var f=0,i=d.length;i>f;++f)e.push(k(d[f],a.slice,c));g(e.join(""),a,c)}else h(a.source,!1,a)}function g(a,b,c){var d=document.createElement("canvas"),e=d.getContext("2d"),g=new Image;g.onload=function(){e.drawImage(g,0,0,2,3);for(var l,d=e.getImageData(0,0,2,3).data,i=0,j=d.length,k=!1;j>i;){var m=d[i++],n=d[i++],o=d[i++],q=(d[i++],0|(m+n+o)/3);if(l===q){k=!0;break}l=q}k?f(b,c):h(a,!0,b)},g.onerror=function(){f(b,c)},g.src=a}function h(a,b,c){c.callback.call(c.context,a,b,{source:c.source,strength:c.strength,attempts:c.attempts})}function i(a){console.error(a)}function j(a,b,c){return b>a?b:a>c?c:a}function k(a,c){for(var g,h,i,d=["data:"+c+";base64,"],e=0,f=a.length;f>e;){if(g=255&a.charCodeAt(e++),e===f){d.push(b.charAt(g>>2)),d.push(b.charAt((3&g)<<4)),d.push("==");break}if(h=a.charCodeAt(e++),e===f){d.push(b.charAt(g>>2)),d.push(b.charAt((3&g)<<4|(240&h)>>4)),d.push(b.charAt((15&h)<<2)),d.push("=");break}i=a.charCodeAt(e++),d.push(b.charAt(g>>2)),d.push(b.charAt((3&g)<<4|(240&h)>>4)),d.push(b.charAt((15&h)<<2|(192&i)>>6)),d.push(b.charAt(63&i))}return d.join("")}var b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";return c}();
+var glitch=function(){"use strict";function b(a,b,f,g){if("string"!=typeof a)return h("An image source is required");if("function"!=typeof b)return h("A callback Function is required");f=i(f,5,100)||25,g=i(g,5,100)||50;var j=/data:[\w\/\w]+;base64,/i.test(a);j?e(d(this,a,b,f),g):c(this,a,b,f,g)}function c(a,c,d,e,f){var g=new XMLHttpRequest;g.open("GET",c),g.overrideMimeType("text/plain;charset=x-user-defined"),g.onload=function(){var c=g.response,h=c.substring(0,24).match(/[JFIF|GIF|PNG]+/i);if(h){var i=/[JFIF]+/i.test(h[0])?"jpeg":h[0].toLowerCase(),k=j(c,"image/"+i);b.call(a,k,d,e,f)}},g.onerror=function(){h("The image could not be loaded")},g.send()}function d(a,b,c,d){function g(a){var b=a.length,c=Math.sqrt(b*(parseFloat("1e"+b.toString().length)/d)),e=b/c;return a.match(new RegExp(".{1,"+Math.ceil(b/e)+"}","g"))}var e=b.split(","),f=g(e[1],d);return"p"===e[0].charAt(11)&&(d/=4),{context:a,source:b,callback:c,strength:d,attempts:0,header:e[0]+",",data:f,slice:f[f.length-1].length}}function e(b,c){function k(b,c,d){for(var e=i(0|d/2,1,25);e--;){var f=Math.random()*c|0,g=a.charAt(64*Math.random()|0);b=b.substring(0,f)+g+b.substring(++f)}return b}var d=b.data,e=[b.header];if(++b.attempts<c){for(var h=0,j=d.length;j>h;++h)e.push(k(d[h],b.slice,c));f(e.join(""),b,c)}else g(b.source,!1,b)}function f(a,b,c){var d=document.createElement("canvas"),f=d.getContext("2d"),h=new Image;h.onload=function(){f.drawImage(h,0,0,2,3);for(var l,d=f.getImageData(0,0,2,3).data,i=0,j=d.length,k=!1;j>i;){var m=d[i++],n=d[i++],o=d[i++],q=(d[i++],0|(m+n+o)/3);if(l===q){k=!0;break}l=q}k?e(b,c):g(a,!0,b)},h.onerror=function(){e(b,c)},h.src=a}function g(a,b,c){c.callback.call(c.context,a,b,{source:c.source,strength:c.strength,attempts:c.attempts})}function h(a){console.error(a)}function i(a,b,c){return b>a?b:a>c?c:a}function j(b,c){for(var g,h,i,d=["data:"+c+";base64,"],e=0,f=b.length;f>e;){if(g=255&b.charCodeAt(e++),e===f){d.push(a.charAt(g>>2)),d.push(a.charAt((3&g)<<4)),d.push("==");break}if(h=b.charCodeAt(e++),e===f){d.push(a.charAt(g>>2)),d.push(a.charAt((3&g)<<4|(240&h)>>4)),d.push(a.charAt((15&h)<<2)),d.push("=");break}i=b.charCodeAt(e++),d.push(a.charAt(g>>2)),d.push(a.charAt((3&g)<<4|(240&h)>>4)),d.push(a.charAt((15&h)<<2|(192&i)>>6)),d.push(a.charAt(63&i))}return d.join("")}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";return b}();
 
 // page script
 var demo = {
@@ -281,7 +281,11 @@ function renderDemo(source){
 	var strength = 0|Math.random() * 100;
 	glitch(source, function(result, succes, object){
 		
-		console.log(succes, object);
+		console.log(
+			"succesful: " + succes, 
+			"strength: " + object.strength,
+			"attempts: " + object.attempts
+		);
 					
 		demo.target.style.backgroundImage = "url(" + result + ")";
 		demo.target.classList.add("glitched");
@@ -316,15 +320,19 @@ function glitchExample(button){
 
 function renderExample(source, target, i){
 	
-	var strength = (target.id === "png" ? 25 : 100);
+	var strength = 0|Math.random() * 50;
 	glitch(source || target.src, function(result, succes, object){
 		
-		console.log(succes, object);
+		console.log(
+			"succesful: " + succes, 
+			"strength: " + object.strength,
+			"attempts: " + object.attempts
+		);
 		
 		target.src = result;
 		example.sources[i] = source || object.source;
 		
-	}, 50);
+	}, strength);
 }
 
 function toggle(event){
