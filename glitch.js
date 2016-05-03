@@ -1,5 +1,5 @@
 var glitch = function(){ "use strict";
-
+	
 	var support = /[jpeg|png|gif]+/i;
 	var charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	
@@ -12,11 +12,11 @@ var glitch = function(){ "use strict";
 		
 		strength = limit(strength, 5, 100) || 25;
 		attempts = limit(attempts, 5, 100) || 50;
-									
-		var isBase64 = /data:[\w\/\w]+;base64,/i.test(source);		
+		
+		var isBase64 = /data:[\w\/\w]+;base64,/i.test(source);
 		if (isBase64) manipulate(prepare(this, source, callback, strength), attempts);
 		else get(this, source, callback, strength, attempts);
-
+	
 	}	
 	return glitch;
 	
@@ -68,27 +68,28 @@ var glitch = function(){ "use strict";
 		function distribute(data){
 			var bytes = data.length;
 			var slice = Math.sqrt(bytes * (parseFloat("1e" + bytes.toString().length) / strength));
-			var count = bytes / slice;											
+			var count = bytes / slice;
 			return data.match(new RegExp('.{1,' + Math.ceil(bytes / count) + '}', 'g'));
 		}
 		
 	}
 	
 	// B) Manipulation
-	// 1)
+	// 1) 
 	function manipulate(object, attempts){
-										
+		
 		var data = object.data;
 		var result = [ object.header ];
 				
 		if (++object.attempts < attempts){
 			for (var i = 0, length = data.length; i < length; ++i){
-				result.push(alter(data[i], object.slice, attempts));	
+				result.push(alter(data[i], object.slice, attempts));
 			}
 			validate(result.join(""), object, attempts);
 		}
 		else delegate(object.source, false, object);
 		
+		// 
 		function alter(string, length, attempts){
 			
 			var amount = limit(0|attempts / 10, 1, 10);
@@ -99,15 +100,15 @@ var glitch = function(){ "use strict";
 			}
 			return string;
 		}
-			
-	}
 		
+	}
+	
 	// 2) Check the image integrety, manipulate again when its broken, otherwise run the callback
 	function validate(result, object, attempts){
-			
+		
 		var canvas = document.createElement('canvas');
 		var context = canvas.getContext('2d');
-		var	image = new Image();
+		var image = new Image();
 		
 		image.onload = function(){
 		
@@ -119,7 +120,7 @@ var glitch = function(){ "use strict";
 				var r = sample[i++], g = sample[i++], b = sample[i++], a = sample[i++];
 				var average = 0|(r + g + b) / 3;
 				
-				if (previous === average){ 
+				if (previous === average){
 					broken = true;
 					break;
 				}
@@ -133,7 +134,7 @@ var glitch = function(){ "use strict";
 		};
 		image.onerror = function(){ manipulate(object, attempts) };
 		image.src = result;
-			
+		
 	}
 	
 	// C) Callback
@@ -159,7 +160,7 @@ var glitch = function(){ "use strict";
 					
 		var data = [ "data:" + type + ";base64," ];
 		var i = 0, length = blob.length;
-		var	A, B, C;
+		var A, B, C;
 	
 		while (i < length){
 			A = blob.charCodeAt(i++) & 0xff;
@@ -183,7 +184,6 @@ var glitch = function(){ "use strict";
 				data.push(charset.charAt(((B & 0xF) << 2) | ((C & 0xC0) >> 6)));
 				data.push(charset.charAt(C & 0x3F));
 		}
-		
 		return data.join("");
 		
 	}
