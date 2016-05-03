@@ -12,38 +12,76 @@
 	vertical-align: bottom;
 }
 
-html, body {
+html, body, .page {
 	font-family: Futura, Helvetica, Arial, sans-serif;
 	text-align: center;
 	width: 100%;
 	height: 100%;
 }
 
-html {
+header.page h1 { font-size: 250% }
+header.page h2 { font-size: 137.5% }
+header h1 { font-size: 162.5% }
+p { font-size: 112.5% }
+.tabs, .button { font-size: 75% }
+
+h2 { font-weight: normal }
+
+a { text-decoration: none }
+
+small { 
+	display: block;
+	margin: 0.5em;
+	z-index: 100;
+	position: relative;
+}
+
+#demo, a { overflow: hidden }
+
+#demo:before {
+	content: "";
+	background-color: white;
 	background-image: 
 		linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee), 
 		linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee);
 	background-size: 1em 1em;
 	background-position: 0 0, 0.5em 0.5em;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: -1;
 }
 
-body {
+#demo.glitched:before { background: inherit }
+
+header.page { 
+	height: auto;
+	min-height: 66.66%;
+	z-index: 100;
+}
+
+.page {
 	background-size: contain;
 	background-position: center;
+	background-color: #fff;
+	padding: 5%;
 	display: table;
+	position: relative;
+	z-index: 10;
 }
 
-header {
+.content {
 	display: table-cell;
 	padding: 0 5% 5em;
 	vertical-align: middle;
-	z-index: -1;
 }
 
 form { 
 	width: 100%;
 	padding: 0 0 7.5%;
-	position: fixed;
+	position: absolute;
 	left: 0;
 	bottom: 0;
 	z-index: 10;
@@ -60,7 +98,6 @@ p {
 }
 
 .button {
-	font-size: 75%;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	word-spacing: 0.06em;
@@ -68,7 +105,7 @@ p {
 	background: #fff;
 	width: 12em;
 	padding: 1.25em 1em 1.5em;
-	margin: 0 0.25em;
+	margin: 5% 0.25em 0;
 	display: inline-block;
 	border: 2px solid #000;
 	cursor: pointer;
@@ -87,6 +124,7 @@ p {
 .button:disabled { background: transparent }
 
 input[type=file] {
+	background: blue;
 	width: 100%;
 	height: 100%;
 	position: fixed;
@@ -96,28 +134,120 @@ input[type=file] {
 	z-index: -1;
 }
 
-body.processing .button.glitch,
+
+li { list-style: none }
+
+.tabs {
+	color: #000;
+	display: table;
+	margin: 1em auto 2em;
+}
+
+.tabs li {
+	border-color: red;
+	display: table-row;
+	float: left;
+}
+
+.tabs a {
+	color: black;
+	width: 8.25em;
+	padding: 0.75em 0 1em;
+	display: block;
+	border: 2px solid black;
+}
+
+.tabs a:hover { color: blue }
+
+.tabs a.active {
+	color: #fff;
+	background: black;
+	border-color: black;
+}
+
+.tabs li + li a { border-left: 0 }
+
+.processing .button.glitch,
 .button:disabled { 
 	opacity: 0.5;
 	pointer-events: none;
 	cursor: default;
 }
 
-body.glitched header { display: none }
+.glitched header { display: none }
+
+#example header {
+	position: absolute;
+	width: 100%;
+	left: 0;
+}
+
+#example .content {
+	padding-top: 10em;
+	padding-bottom: 6em;
+}
+
+img {
+	width: auto;
+	max-width: 100%;
+	height: auto;
+	max-height: 32em;
+	display: none;
+}
+
+img.visible { display: inline-block }
 </style>
 </head>
-<body data-glitch="a.jpg">
-
-	<header>
+<body>
+	
+	<header class="page"><div class="content">
+		
 		<h1>Glitch JS</h1>
-		<p>Drop or select an image to glitch, supported filetypes are jpeg, png, and gif. Your image will not be uploaded.</p>
-	</header>
+		<h2>Add glitches to&nbsp;your&nbsp;images</h2>
+		
+		<a class="github button" href="https://github.com/nathanuphoff/Glitch-JS">GitHub</a>
+		
+	</div></header>
+	
+	<section id="demo" class="page">
 
-	<form>
-		<label class="button" for="image">Select image</label>
-		<input id="image" name="input" type="file" onchange="update(this)">	
-		<button class="button glitch" type="button" onclick="update()" disabled>Glitch Again</button>
-	</form>
+		<header class="content">
+			<h1>Try Glitch JS</h1>
+			<p>Drop or select an image to glitch, supported filetypes are jpeg, png, and gif. Your image will not be&nbsp;uploaded.</p>
+		</header>
+	
+		<form>
+			<label class="button" for="image">Select Image</label>
+			<input id="image" name="input" type="file" onchange="glitchDemo(this)">	
+			<button class="button glitch" type="button" onclick="glitchDemo()" disabled>Glitch Again</button>
+		</form>
+	
+	</section>
+	
+	<section id="example" class="page">
+		
+		<header>
+			<h1>Examples</h1>
+			<ul class="tabs" onclick="toggle(event)">
+				<li><a class="active" href="#jpeg">JPEG</a>
+				<li><a href="#png">PNG</a>
+				<li><a href="#gif">GIF</a>
+			</ul>
+		</header>
+		
+		<div class="content">
+			<img id="jpeg" class="visible" src="https://i.imgur.com/0z3ybGX.jpg">
+			<img id="png" src="https://i.imgur.com/e9uQxrd.png">
+			<img id="gif" src="http://i.imgur.com/7O2FM6I.gif">
+			
+			<small>Image via <a href="https://imgur.com">Imgur</a></small>
+		</div>
+		
+		<form>
+			<button class="button glitch" type="button" onclick="glitchExample(this)">Glitch Image</button>
+		</form>
+				
+	</section>
 
 </body>
 <script>
@@ -126,38 +256,92 @@ body.glitched header { display: none }
 var glitch=function(){"use strict";function c(a,b,c,g){if("string"!=typeof a)return i("An image source is required");if("function"!=typeof b)return i("A callback Function is required");c=j(c,5,100)||25,g=j(g,5,100)||50;var h=/data:[\w\/\w]+;base64,/i.test(a);h?f(e(this,a,b,c),g):d(this,a,b,c,g)}function d(a,b,d,e,f){var g=new XMLHttpRequest;g.open("GET",b),g.overrideMimeType("text/plain;charset=x-user-defined"),g.onload=function(){var b=g.response,h=b.substring(0,24).match(/[JFIF|GIF|PNG]+/i);if(h){var i=/JFIF/i.test(h[0])?"jpeg":h[0].toLowerCase(),j=k(b,"image/"+i);c.call(a,j,d,e,f)}},g.onerror=function(){i("The image could not be loaded")},g.send()}function e(a,b,c,d){function g(a){var b=a.length,c=Math.sqrt(b*(parseFloat("1e"+b.toString().length)/d)),e=b/c;return a.match(new RegExp(".{1,"+Math.ceil(b/e)+"}","g"))}var e=b.split(","),f=g(e[1],d);return{context:a,source:b,callback:c,strength:d,attempts:0,header:e[0]+",",data:f,slice:f[f.length-1].length}}function f(a,c){function k(a,c,d){for(var e=j(0|d/10,1,10);e--;){var f=Math.random()*c|0,g=b.charAt(64*Math.random()|0);a=a.substring(0,f)+g+a.substring(++f)}return a}var d=a.data,e=[a.header];if(++a.attempts<c){for(var f=0,i=d.length;i>f;++f)e.push(k(d[f],a.slice,c));g(e.join(""),a,c)}else h(a.source,!1,a)}function g(a,b,c){var d=document.createElement("canvas"),e=d.getContext("2d"),g=new Image;g.onload=function(){e.drawImage(g,0,0,2,3);for(var l,d=e.getImageData(0,0,2,3).data,i=0,j=d.length,k=!1;j>i;){var m=d[i++],n=d[i++],o=d[i++],q=(d[i++],0|(m+n+o)/3);if(l===q){k=!0;break}l=q}k?f(b,c):h(a,!0,b)},g.onerror=function(){f(b,c)},g.src=a}function h(a,b,c){c.callback.call(c.context,a,b,{source:c.source,strength:c.strength,attempts:c.attempts})}function i(a){console.error(a)}function j(a,b,c){return b>a?b:a>c?c:a}function k(a,c){for(var g,h,i,d=["data:"+c+";base64,"],e=0,f=a.length;f>e;){if(g=255&a.charCodeAt(e++),e===f){d.push(b.charAt(g>>2)),d.push(b.charAt((3&g)<<4)),d.push("==");break}if(h=a.charCodeAt(e++),e===f){d.push(b.charAt(g>>2)),d.push(b.charAt((3&g)<<4|(240&h)>>4)),d.push(b.charAt((15&h)<<2)),d.push("=");break}i=a.charCodeAt(e++),d.push(b.charAt(g>>2)),d.push(b.charAt((3&g)<<4|(240&h)>>4)),d.push(b.charAt((15&h)<<2|(192&i)>>6)),d.push(b.charAt(63&i))}return d.join("")}var b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";return c}();
 
 // page script
-var base = "";
-var body = document.body;
-var button = document.querySelector("button.glitch");
+var demo = {
+	source: "",
+	target: document.querySelector("#demo"),
+	button: document.querySelector("#demo button.glitch"),
+};
 
-function update(input){ 
+function glitchDemo(input){ 
 	
 	if (input){
 		var reader = new FileReader();
-		reader.onload = function(){ render(reader.result) };
+		reader.onload = function(){ renderDemo(reader.result) };
 		reader.readAsDataURL(input.files[0]);
 	}
-	else render(base);
+	else renderDemo(demo.base);
 
 }
 
-function render(source){
+function renderDemo(source){
 
-	base = source;
-	body.classList.add("processing");
+	demo.base = source;
+	demo.target.classList.add("processing");
 	
 	var strength = 0|Math.random() * 100;
 	glitch(source, function(result, succes, object){
 		
 		console.log(succes, object);
 					
-		body.style.backgroundImage = "url(" + result + ")";
-		body.classList.add("glitched");
-		body.classList.remove("processing");
+		demo.target.style.backgroundImage = "url(" + result + ")";
+		demo.target.classList.add("glitched");
+		demo.target.classList.remove("processing");
 	
-		button.disabled = false;
+		demo.button.disabled = false;
 	
 	}, strength);
+	
+}
+
+var example = {
+	items: [].slice.call(document.querySelectorAll("#example .tabs a")),
+	sources: [],
+	targets: [],
+	active: 0,
+};
+
+!function(){
+	example.items.forEach(function(element, i){
+		var target = document.querySelector(element.getAttribute("href"));
+		example.targets[i] = target;
+	});
+}();
+
+function glitchExample(button){
+	var i = example.active;
+	var target = example.targets[i];
+	var source = example.sources[i];
+	renderExample(source, target, i);
+}
+
+function renderExample(source, target, i){
+	
+	var strength = (target.id === "png" ? 25 : 100);
+	glitch(source || target.src, function(result, succes, object){
+		
+		console.log(succes, object);
+		
+		target.src = result;
+		example.sources[i] = source || object.source;
+		
+	}, 50);
+}
+
+function toggle(event){
+		
+	event.preventDefault();
+	example.items.forEach(function(element, i){
+		var target = example.targets[i];
+		if (element === event.target){
+			example.active = i;
+			element.classList.add("active");
+			target.classList.add("visible");
+		}
+		else {
+			element.classList.remove("active");
+			target.classList.remove("visible");
+		}
+	});
 	
 }
 </script>

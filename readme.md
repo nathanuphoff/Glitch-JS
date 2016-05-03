@@ -1,8 +1,7 @@
 Glitch JS is a small and dependency free script that manipulates images by making a random edits causing visual glitches to appear. Supported file types are jpeg, png, and (animated) gif.
 
 # Demo
-[Demo hosted at CloudApp](http://f.cl.ly/items/3o371o2n1C2G2K2V2Z2I/index.html), or open index.html in this repository.
-Select an image from your device and see the glitch effect, your image will not be uploaded.
+Open this [demo hosted at CloudApp](http://f.cl.ly/items/1Y2f2B3b0M40251n3P2i/index.html) or index.html locally.
 
 # Usage
 ## Examples
