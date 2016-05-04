@@ -28,14 +28,14 @@ var glitch = function(){ "use strict";
 		request.open('GET', source);
 		request.overrideMimeType('text/plain;charset=x-user-defined');
 		request.onload = function(){
-						
+			
 			var response = request.response;
-			var match = response.substring(0,24).match(/[JFIF|GIF|PNG]+/i);
-			if (match){
-				var type = /[JFIF]+/i.test(match[0]) ?	"jpeg" : match[0].toLowerCase();
-				var file = encode(response, "image/" + type);
-				glitch.call(context, file, callback, strength, attempts);
-			}
+			
+			var match = response.substring(0,9).match(/(gif|png)/i);
+			var type = match ? match[0].toLowerCase() : "jpeg";
+			
+			source = encode(response, "image/" + type);
+			glitch.call(context, source, callback, strength, attempts);
 			
 		};
 		request.onerror = function(){ error("The image could not be loaded") };
@@ -45,11 +45,15 @@ var glitch = function(){ "use strict";
 	
 	// 2) Return an Object from a base64-encoded string that will be used later on
 	function prepare(context, source, callback, strength){
-	
-		var split = source.split(",");
-		var data = distribute(split[1], strength);
 		
-		if (split[0].charAt(11) === "p") strength /= 4; // reduce strength for png images
+		var distribution = strength;
+		var split = source.split(",");
+		var type = split[0].charAt(11);
+		
+		if (type === "p") distribution /= 25; // Reduce slice amount for png...
+		else if (type === "g") distribution /= 5; // .. and gif images.
+		
+		var data = distribute(split[1], distribution);
 		
 		return {
 			
@@ -93,7 +97,7 @@ var glitch = function(){ "use strict";
 		// 
 		function alter(string, length, attempts){
 			
-			var amount = limit(0|attempts / 2, 1, 25);
+			var amount = limit(0|attempts / 5, 1, 20); // decrease amount of edits with each attempt
 			while (amount--){
 				var index = Math.random() * length|0;
 				var replacement = charset.charAt(Math.random() * 64|0);
