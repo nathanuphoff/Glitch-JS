@@ -5,7 +5,7 @@ Open this [demo hosted at CloudApp](http://f.cl.ly/items/3M321D100S0w2G360r0z/in
 
 # Usage
 ## Examples
-```
+```javascript
 // Using a URL...
 glitch("/image.jpg", callback);
 
@@ -20,7 +20,7 @@ glitch(base64, callback, 10, 25);
 ```
 
 The callback arguments are a base64-encoded image string, a boolean indicating whether the manipulation was successful, and a data-object.
-```
+```javascript
 function callback(image, succes, object){
 	// image {string}: a base64-encoded image string.
 	// succes {boolean}: true if the manipulation was successful, otherwise false
